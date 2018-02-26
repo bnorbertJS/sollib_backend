@@ -7,6 +7,40 @@ use rocket::response::status;
 use bcrypt::{DEFAULT_COST, hash, verify};
 use frank_jwt::{Algorithm, encode, decode};
 use std::env;
+use rocket::Outcome;
+use rocket::http::Status;
+use rocket::request::{self, Request, FromRequest};
+
+struct ApiKey(String);
+
+fn is_valid(key: &str) -> bool {
+    let s_key = env::var("SECRET_KEY").expect("cannot find env variable SECRET_KEY");
+    
+    match decode(&key.to_string(), &s_key, Algorithm::HS256) {
+        Ok(token) => true,
+        Err(err) => false
+    }
+}
+
+impl<'a, 'r> FromRequest<'a, 'r> for ApiKey {
+    type Error = ();
+
+    fn from_request(request: &'a Request<'r>) -> request::Outcome<ApiKey, ()> {
+        let keys: Vec<_> = request.headers().get("x-sollib-key").collect();
+
+        if keys.len() != 1 || !is_valid(keys[0]) {
+            return Outcome::Failure((Status::Unauthorized, ()));
+        }
+
+        //processing vector
+        
+       /* if !is_valid(keys[0]) {
+            return Outcome::Forward(());
+        }*/
+        let key = keys[0];
+        return Outcome::Success(ApiKey(key.to_string()));
+    }
+}
 
 #[get("/")]
 fn welcome() -> &'static str {
@@ -25,7 +59,7 @@ fn get_solutions(conn: DbConn) -> Json<Value> {
 }
 
 #[get("/solution/<id>")]
-fn get_solution_by_id(id: i32, conn: DbConn) -> Json<Value> {
+fn get_solution_by_id(key: ApiKey, id: i32, conn: DbConn) -> Json<Value> {
     let solution = Solution::by_id(id,&conn);
     let result_json;
 
