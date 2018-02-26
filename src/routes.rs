@@ -1,6 +1,5 @@
 use db::Conn as DbConn;
 use rocket_contrib::Json;
-use rocket::request::Form;
 use super::models::{Solution, User};
 use serde_json::Value;
 use rocket::response::status;
@@ -9,13 +8,13 @@ use frank_jwt::{Algorithm, encode, decode};
 use std::env;
 use rocket::Outcome;
 use rocket::http::Status;
-use rocket::request::{self, Request, FromRequest};
+use rocket::request::{self, Request, FromRequest, Form};
 
 struct ApiKey(String);
 
 fn is_valid(key: &str) -> bool {
     let s_key = env::var("SECRET_KEY").expect("cannot find env variable SECRET_KEY");
-    
+
     match decode(&key.to_string(), &s_key, Algorithm::HS256) {
         Ok(token) => true,
         Err(err) => false
