@@ -6,6 +6,7 @@ use serde_json::Value;
 use rocket::response::status;
 use bcrypt::{DEFAULT_COST, hash, verify};
 use frank_jwt::{Algorithm, encode, decode};
+use std::env;
 
 #[get("/")]
 fn welcome() -> &'static str {
@@ -55,8 +56,7 @@ fn generate_token() -> String{
         "email" : "bnorbertjs@gmail.com",
         "admin" : false
     });
-    
-    let secret = "secret123";
+    let secret = env::var("SECRET_KEY").expect("cannot find env variable SECRET_KEY");
 
     let jwt = encode(json!({}), &secret.to_string(), &payload, Algorithm::HS256);
 
