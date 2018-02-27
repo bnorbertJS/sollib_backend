@@ -16,6 +16,7 @@ extern crate frank_jwt;
 use dotenv::dotenv;
 use std::env;
 
+mod register;
 mod auth;
 mod models;
 mod db;
@@ -60,7 +61,8 @@ fn main() {
         .mount("/api/v1/", routes![
             routes::get_solutions,
             routes::get_solution_by_id,
-            routes::login
+            routes::login,
+            routes::register
         ])
         .launch();
 }

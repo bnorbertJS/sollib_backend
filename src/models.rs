@@ -13,8 +13,7 @@ pub struct Solution {
     desc: String
 }
 
-#[table_name="user"]
-#[derive(Serialize, Insertable, Queryable, Debug, Clone, PartialEq)]
+#[derive(Serialize, Queryable, Debug, Clone, PartialEq)]
 pub struct User {
     id: i32,
     full_name: String,
@@ -60,5 +59,9 @@ impl User{
         .filter(user::email.eq(email))
         .select(user::pass)
         .first(conn)
+    }
+
+    pub fn new(){
+        
     }
 }

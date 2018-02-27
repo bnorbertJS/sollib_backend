@@ -2,7 +2,7 @@ use db::Conn as DbConn;
 use rocket_contrib::Json;
 use super::models::{Solution, User};
 use serde_json::Value;
-use rocket::response::status;
+use rocket::response::Redirect;
 use bcrypt::{DEFAULT_COST, hash, verify};
 use frank_jwt::{Algorithm, encode, decode};
 use std::env;
@@ -10,6 +10,7 @@ use rocket::Outcome;
 use rocket::http::Status;
 use rocket::request::{self, Request, FromRequest, Form};
 use auth::{ApiKey, is_valid, UserLogin, generate_token, validate_pw};
+use register::{UserReg, register_user};
 
 #[get("/")]
 fn welcome() -> &'static str {
@@ -63,4 +64,15 @@ fn login(user_login: Form<UserLogin>, conn: DbConn) -> String{
         Ok(res) => validate_pw(client_pw, res),
         Err(_) => "Invalid Username/Password".to_string()
     }
+}
+
+#[post("/register", data="<user_reg>")]
+fn register(user_reg: Form<UserReg>, conn: DbConn) -> Result<Redirect, String> {
+    //return Ok(Redirect::to("/login"))
+
+    let user_fields = user_reg.get();
+
+    let user = register_user(user_fields, &conn);
+    println!("{:?}",user);
+    Ok(Redirect::to("/login"))
 }
