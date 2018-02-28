@@ -67,12 +67,17 @@ fn login(user_login: Form<UserLogin>, conn: DbConn) -> String{
 }
 
 #[post("/register", data="<user_reg>")]
-fn register(user_reg: Form<UserReg>, conn: DbConn) -> Result<Redirect, String> {
+fn register(user_reg: Form<UserReg>, conn: DbConn) -> String {
     //return Ok(Redirect::to("/login"))
 
     let user_fields = user_reg.get();
 
     let user = register_user(user_fields, &conn);
     println!("{:?}",user);
-    Ok(Redirect::to("/login"))
+
+    if let Err(e) = user {
+        return format!("Registration failed: {}", e);
+    }else{
+        return format!("You are registered. congrats {:?}",user);
+    }
 }
