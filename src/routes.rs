@@ -67,17 +67,24 @@ fn login(user_login: Form<UserLogin>, conn: DbConn) -> String{
 }
 
 #[post("/register", data="<user_reg>")]
-fn register(user_reg: Form<UserReg>, conn: DbConn) -> String {
-    //return Ok(Redirect::to("/login"))
-
+fn register(user_reg: Form<UserReg>, conn: DbConn) -> Json<Value> {
     let user_fields = user_reg.get();
-
+    let resp;
     let user = register_user(user_fields, &conn);
-    println!("{:?}",user);
 
     if let Err(e) = user {
-        return format!("Registration failed: {}", e);
+        resp = Json(json!({
+            "error": e,
+        }));
     }else{
-        return format!("You are registered. congrats {:?}",user);
+        resp = Json(json!({
+            "status": 201,
+            "result": {
+                "full_name": user_fields.full_name,
+                "email": user_fields.email
+            } 
+        }));
     }
+
+    resp
 }

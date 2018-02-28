@@ -9,7 +9,7 @@ use schema::{users};
 use diesel;
 use diesel::insert_into;
 use diesel::prelude::*;
-
+// REFACTOR PRIO2
 /*#[derive(Debug)]
 struct CantMiss(&'static str);
 
@@ -27,12 +27,12 @@ impl<'v> FromFormValue<'v> for CantMiss{
 #[derive(FromForm, Insertable, Serialize, Deserialize, Debug)]
 #[table_name="users"]
 pub struct UserReg {
-    full_name: String,
-    email: String,
+    pub full_name: String,
+    pub email: String,
     pass: String
 }
 //TODO: validate form data with FromFormValue
-//TODO: specify proper return type 201 created or something
+//TODO: specify proper return type
 pub fn register_user<'a>(u: &'a UserReg, conn: &PgConnection) -> Result<&'a UserReg, String>{
     use schema::users::dsl::users;
 
@@ -40,7 +40,7 @@ pub fn register_user<'a>(u: &'a UserReg, conn: &PgConnection) -> Result<&'a User
         return Err("Fields cannot be blank".to_string());
     }
 
-    //TODO hash pw
+    //TODO hash pw PRIO 1
     
     let insert_res = insert_into(users)
                         .values(u)

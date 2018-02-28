@@ -61,9 +61,7 @@ pub fn generate_token() -> String{
 }
 
 pub fn validate_pw(client_pw: String, db_pw: String) -> String{
-    println!("{:?}",client_pw);
-    println!("{:?}",db_pw);
-    print!("{:?}",verify(&client_pw, &db_pw).unwrap());
+    //password ok?
     match verify(&client_pw, &db_pw) {
         Ok(valid) => if valid { generate_token() } else { "Invalid Username/Password".to_string() },
         Err(_) => "Invalid Username/Password".to_string()
