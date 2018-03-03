@@ -32,7 +32,6 @@ pub struct UserReg {
     pass: String
 }
 //TODO: validate form data with FromFormValue
-//TODO: specify proper return type
 pub fn register_user<'a>(u: &'a UserReg, conn: &PgConnection) -> Result<&'a UserReg, String>{
     use schema::users::dsl::users;
 

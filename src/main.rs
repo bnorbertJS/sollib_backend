@@ -62,7 +62,8 @@ fn main() {
             routes::get_solutions,
             routes::get_solution_by_id,
             routes::login,
-            routes::register
+            routes::register,
+            routes::get_me
         ])
         .launch();
 }
